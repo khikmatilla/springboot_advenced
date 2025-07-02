@@ -47,3 +47,84 @@ db.users.find().skip(page*size).limit(size);
 page = 1;
 db.users.find().skip(page*size).limit(size);
 
+-------------------------------------------------------------------------------------------------------------
+db.users.find({age: {$eq: 25}});
+db.users.find({age: {$gt: 25}});
+db.users.find({age: {$gt: 25}}).sort({age: 1}).limit(2);
+db.users.find({age: {$gte: 25}}).sort({age: 1}).limit(5);
+db.users.find({age: {$in: [18, 21, 37]}});
+db.users.find({age: {$nin: [18, 21, 37]}}).sort({age: 1});
+
+db.users.find({$and : [{age: {$gte: 25}}, {first_name: /^A.*/}]});
+db.users.find({$or : [{age: {$gte: 63}}, {first_name: /^Ar.*/}]});
+db.users.find({$nor: [{age: {$gte: 63}}, {first_name: /^A.*/}]});
+
+db.users.insertOne({
+    first_name: 'Hikmatilla',
+    last_name: 'hikmatilla',
+    gender: 'Male',
+    children: ['Hasan', 'Husan']
+});
+
+db.users.insertOne({
+    first_name: 'Gaday',
+    last_name: 'Islom',
+    gender: 'Male',
+    children: ['Sadiya', 'MuhammadIslom']
+});
+
+db.users.find({children: {$exists: true}});
+db.users.find({children: {$all: ['Sadiya']}});
+db.users.find({children: {$exists: true}, $where: 'this.children.length > 2'});
+
+db.users.updateMany({},{$rename: {first_name: 'firstName', last_name: 'lastName'}})
+db.users.updateMany({}, {$unset: {gender: ''}});
+
+db.createCollection('sales');
+
+db.sales.insertMany(
+    [
+        {
+            "date": "2022-03-25",
+            "product": "Apple",
+            "quantity": 5,
+            "price": 1.0
+        },
+        {
+            "date": "2022-03-25",
+            "product": "Orange",
+            "quantity": 3,
+            "price": 1.5
+        },
+        {
+            "date": "2022-03-26",
+            "product": "Banana",
+            "quantity": 2,
+            "price": 0.5
+        },
+        {
+            "date": "2022-03-27",
+            "product": "Apple",
+            "quantity": 7,
+            "price": 1.0
+        },
+        {
+            "date": "2022-03-27",
+            "product": "Orange",
+            "quantity": 4,
+            "price": 1.5
+        },
+        {
+            "date": "2022-03-27",
+            "product": "Banana",
+            "quantity": 3,
+            "price": 0.5
+        },
+        {
+            "date": "2022-03-25",
+            "product": "Banana",
+            "quantity": 2,
+            "price": 1.2
+        }
+    ]
+);
