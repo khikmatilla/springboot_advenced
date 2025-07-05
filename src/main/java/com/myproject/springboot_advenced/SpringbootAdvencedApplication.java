@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
 
@@ -16,12 +17,7 @@ public class SpringbootAdvencedApplication {
     }
 
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-
-        return builder
-                .setConnectTimeout(Duration.ofMillis(300))
-                .setReadTimeout(Duration.ofMillis(2000))
-                .build();
+    public WebClient webClient() {
+        return WebClient.create();
     }
-
 }
