@@ -6,31 +6,23 @@ import com.myproject.springboot_advenced.dto.PostCreateDto;
 import com.myproject.springboot_advenced.dto.PostDto;
 import com.myproject.springboot_advenced.entity.Post;
 import com.myproject.springboot_advenced.repository.PostRepository;
-import com.myproject.springboot_advenced.resourc.CommentResources;
+import com.myproject.springboot_advenced.resourc.CommentClient;
 import lombok.NonNull;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-
+@RequiredArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
-    private final CommentResources commentResources;
+    private final CommentClient commentClientResources;
 
-    public PostServiceImpl(PostRepository postRepository, CommentResources commentResources) {
-        this.postRepository = postRepository;
-        this.commentResources = commentResources;
-    }
 
     @Override
     public PostDto getPost(@NonNull Integer id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with id !!"));
-        List<CommentDTO> comments = commentResources.getComments(id);
+        List<CommentDTO> comments = commentClientResources.getAllComments(id);
         return PostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -55,6 +47,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void saveAllComments(@NonNull List<CommentCreateDTO> dtos) {
-       commentResources.saveAllComments(dtos);
+       commentClientResources.saveAllComments(dtos);
     }
 }
