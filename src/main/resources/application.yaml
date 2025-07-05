@@ -11,3 +11,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+comments:
+  url:
+    base: http://localhost:9595/api/comments
+    postComments: ${comments.url.base}/{0}/post
+    saveComments: ${comments.url.base}/saveAll
+
+logging:
+  level:
+    org.zalando.logbook: trace   # response va request uchun log yozadi
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: trace
+logbook:
+    exclude:
+      - /api/posts/create        # shu url uchun log yozishni taqiqlaydi
