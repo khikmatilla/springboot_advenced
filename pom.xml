@@ -47,8 +47,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
 
         <dependency>
@@ -97,30 +97,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>10.20.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>undo</goal>
-                            <goal>info</goal>
-                            <goal>migrate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <url>jdbc:postgresql://localhost:5432/school?currentSchema=db_flyway</url>
-                    <driver>org.postgresql.Driver</driver>
-                    <user>postgres</user>
-                    <password>123</password>
-                    <baselineOnMigrate>true</baselineOnMigrate>
-                    <schemas>db_flyway</schemas>
-                    <locations>classpath:db/migration/</locations>
                 </configuration>
             </plugin>
         </plugins>
