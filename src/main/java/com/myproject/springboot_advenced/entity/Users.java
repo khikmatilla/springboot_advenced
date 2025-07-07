@@ -8,15 +8,17 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@ToString
 @Entity
-public class Post {
-
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String title;
-    private String body;
+    private String email;
+    private String userName;
+    private String password;
+    private String otp;
 }
