@@ -12,3 +12,21 @@ spring:
       hibernate:
         format_sql: true
 
+  cache:
+    redis:
+      time-to-live: 5m
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+#redis command
+#starter redis - ./redis-server.exe
+#redis shell - ./redis-cli.exe
+# req : ping
+# resp : Pong
+# req : keys *
+# resp : 1) "post::getAll"
+# resp : 2) "post::1"
+# req : ttl post::1
+# resp : (integer) 516

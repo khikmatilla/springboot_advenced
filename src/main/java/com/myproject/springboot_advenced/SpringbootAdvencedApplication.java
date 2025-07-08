@@ -38,10 +38,4 @@ public class SpringbootAdvencedApplication {
         };
     }
 
-    @CacheEvict(value = "post", allEntries = true)
-    @Scheduled(initialDelay = 10, fixedDelay = 5, timeUnit = TimeUnit.SECONDS)
-    public void deleteAllCachedPosts() {
-        log.info("Deleting all cached posts");
-    }
-
 }
