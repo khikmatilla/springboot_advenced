@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/posts")
@@ -32,8 +34,13 @@ public class PostController {
     }
 
     @PutMapping("/update/{id}")
-    public void updatePost(@RequestBody UpdatePostDto updatePostDto) {
-        postService.updatePost(updatePostDto);
+    public Post updatePost(@RequestBody UpdatePostDto updatePostDto) {
+        return postService.updatePost(updatePostDto);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Post>> getAllPosts() {
+        return ResponseEntity.ok().body(postService.getAll());
     }
 
 

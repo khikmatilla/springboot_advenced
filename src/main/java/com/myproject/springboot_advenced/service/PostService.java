@@ -3,6 +3,9 @@ package com.myproject.springboot_advenced.service;
 import com.myproject.springboot_advenced.dto.PostCreateDto;
 import com.myproject.springboot_advenced.dto.UpdatePostDto;
 import com.myproject.springboot_advenced.entity.Post;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface PostService {
 
@@ -12,5 +15,7 @@ public interface PostService {
 
     void delete(Integer id);
 
-    void updatePost(UpdatePostDto updatePostDto);
+    Post updatePost(UpdatePostDto updatePostDto);
+
+    List<Post> getAll();
 }

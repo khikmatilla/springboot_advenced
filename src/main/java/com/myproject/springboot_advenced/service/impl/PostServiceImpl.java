@@ -5,27 +5,22 @@ import com.myproject.springboot_advenced.dto.UpdatePostDto;
 import com.myproject.springboot_advenced.entity.Post;
 import com.myproject.springboot_advenced.repository.PostRepository;
 import com.myproject.springboot_advenced.service.PostService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+@RequiredArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final PostRepository postRepository;
-    private final CacheManager cacheManager;
-    private final Cache cache ;
+    private final PostRepository postRepository;;
 
-    public PostServiceImpl(PostRepository postRepository, CacheManager cacheManager) {
-        this.postRepository = postRepository;
-        this.cacheManager = cacheManager;
-        this.cache = cacheManager.getCache("post");
-    }
 
     @Override
     public Post createPost(PostCreateDto postCreateDto) {
@@ -34,29 +29,31 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @SneakyThrows
+    @Cacheable(value = "post", key = "#id")
     public Post get(Integer id) {
-        Post cachedPost = cache.get(id, Post.class);
-        if (cachedPost != null) {
-            return cachedPost;
-        }
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
         TimeUnit.SECONDS.sleep(2);
-        cache.put(id, post);
         return post;
     }
 
+    @CacheEvict(value = "post", key = "#id")
     @Override
     public void delete(Integer id) {
         postRepository.deleteById(id);
-        cache.evict(id);
     }
 
     @Override
-    public void updatePost(UpdatePostDto dto) {
+    @CachePut(value = "post", key = "#dto.id")
+    public Post updatePost(UpdatePostDto dto) {
         Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new RuntimeException("Post not found"));
         post.setTitle(dto.getTitle());
         post.setBody(dto.getBody());
-        postRepository.save(post);
-        cache.put(dto.getId(), post);
+        return postRepository.save(post);
+    }
+
+    @Override
+    @Cacheable(value = "post", key = "#root.methodName")
+    public List<Post> getAll() {
+        return postRepository.findAll();
     }
 }
