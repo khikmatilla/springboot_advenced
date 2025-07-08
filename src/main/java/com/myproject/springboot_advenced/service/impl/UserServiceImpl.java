@@ -7,6 +7,7 @@ import com.myproject.springboot_advenced.mapper.UsersMapper;
 import com.myproject.springboot_advenced.repository.UsersRepository;
 import com.myproject.springboot_advenced.service.OtpService;
 import com.myproject.springboot_advenced.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,14 @@ public class UserServiceImpl implements UserService {
 
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
-    // private final OtpService otpService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public Users createUser(UserCreateDto userCreateDto) {
         Users users = usersMapper.toEntity(userCreateDto);
         usersRepository.save(users);
-        //otpService.generateOtp(users);
-        eventPublisher.publishEvent(new OtpGenerateEvent(this, users));
+        eventPublisher.publishEvent(new OtpGenerateEvent( users));
         return users;
     }
 }
