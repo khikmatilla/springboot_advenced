@@ -7,12 +7,15 @@ import com.myproject.springboot_advenced.repository.PostRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 
 import java.net.URL;
 import java.util.List;
 
-
+@EnableCaching
 @SpringBootApplication
 public class SpringbootAdvencedApplication {
     public static void main(String[] args) {
@@ -26,6 +29,13 @@ public class SpringbootAdvencedApplication {
             List<Post>posts = objectMapper.readValue(url,new TypeReference<>(){});
             postRepository.saveAll(posts);
         };
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+        cacheManager.setCacheNames(List.of("post"));
+        return cacheManager;
     }
 
 }
