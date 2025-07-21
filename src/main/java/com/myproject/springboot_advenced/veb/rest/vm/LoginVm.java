@@ -8,4 +8,6 @@ import lombok.Setter;
 public class LoginVm {
     private String userName;
     private String password;
+    private Boolean rememberMe;
+
 }

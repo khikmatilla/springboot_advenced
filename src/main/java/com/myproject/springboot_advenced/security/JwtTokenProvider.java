@@ -13,17 +13,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
+
+    private long tokenValidityMillisecondsRemember;
+    private long tokenValidateMilliSeconds;
+    private final Key key;
 
     @Value("${jwt.token.secret}")
     private String secret;
@@ -48,18 +55,25 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String generateToken(String userName, Set<Role>roles) {
-       Claims claims = Jwts.claims().setSubject(userName);
-       claims.put("roles", roles);
+    public String generateToken(Authentication authentication, Boolean rememberMe) {
 
-       Date now = new Date();
-       Date expiration = new Date(now.getTime() + validity);
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(", "));
 
-       return Jwts.builder()
-               .setClaims(claims)
-               .setIssuedAt(now)
-               .setExpiration(expiration)
-               .signWith(SignatureAlgorithm.HS256, secret)
+        long now = System.currentTimeMillis();
+        Date validate;
+        if (rememberMe) {
+            validate = new Date(now + tokenValidityMillisecondsRemember);
+        }else {
+            validate = new Date(now + tokenValidateMilliSeconds);
+        }
+       return Jwts
+               .builder()
+               .setSubject(authentication.getName())
+               .claim("", authorities)
+               .signWith(key, SignatureAlgorithm.HS256)
+               .setExpiration(validate)
                .compact();
     }
 

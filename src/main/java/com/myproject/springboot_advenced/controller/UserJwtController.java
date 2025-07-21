@@ -8,6 +8,9 @@ import com.myproject.springboot_advenced.veb.rest.vm.LoginVm;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,29 +24,28 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class UserJwtController {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final JwtTokenProvider jwtTokenProvider;
 
     private final UsersRepository usersRepository;
 
-    public UserJwtController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UsersRepository usersRepository) {
-        this.authenticationManager = authenticationManager;
+    public UserJwtController(AuthenticationManager authenticationManager, AuthenticationManagerBuilder authenticationManagerBuilder, JwtTokenProvider jwtTokenProvider, UsersRepository usersRepository) {
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.usersRepository = usersRepository;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginVm loginVm) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginVm.getUserName(), loginVm.getPassword()));
-        Users user = usersRepository.findByLogin(loginVm.getUserName());
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + loginVm.getUserName());
-        }
-        String token = jwtTokenProvider.generateToken(loginVm.getUserName(), user.getRoles());
-        Map<Object, Object> map = new HashMap<>();
-        map.put("userName", user.getUserName());
-        map.put("token", token);
+    public ResponseEntity<JWTToken> login(@RequestBody LoginVm loginVm) {
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginVm.getUserName(), loginVm.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtTokenProvider.generateToken(authentication, loginVm.getRememberMe())
+
         return ResponseEntity.ok(map);
     }
 }
