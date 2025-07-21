@@ -22,6 +22,6 @@ public class UsersService {
     }
 
     public Boolean checkUsername(String username) {
-        return usersRepository.findByUserName(username);
+        return usersRepository.existsByUserName(username);
     }
 }

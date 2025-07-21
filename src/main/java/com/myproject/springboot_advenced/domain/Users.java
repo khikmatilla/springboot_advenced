@@ -1,8 +1,8 @@
 package com.myproject.springboot_advenced.domain;
 
+import com.myproject.springboot_advenced.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import com.myproject.springboot_advenced.domain.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +24,10 @@ public class Users implements Serializable {
     private String userName;
     private String password;
     private String email;
+    private String firstName;
+    private String lastName;
+    private Status status;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

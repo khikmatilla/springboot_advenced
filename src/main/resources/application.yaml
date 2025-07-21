@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+jwt:
+  token:
+    secret: NjI1RkM4NzEyM0ZDNEFGRTAxMjM0NTY3ODkwQUJDRUUzMjM0NTY3ODkwQUJDRUUz
+    validity: 864000000
