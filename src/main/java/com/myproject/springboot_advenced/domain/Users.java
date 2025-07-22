@@ -26,15 +26,18 @@ public class Users implements Serializable {
     private String email;
     private String firstName;
     private String lastName;
-    private Status status;
+    private Boolean activated;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany()
     @JoinTable(
-            name = "user_role",
+            name = "user_authorities",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")}
+            inverseJoinColumns = {@JoinColumn(name = "authorities_name", referencedColumnName = "name")}
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Authority> authorities = new HashSet<>();
 
+    public Boolean isActivated() {
+        return activated;
+    }
 }

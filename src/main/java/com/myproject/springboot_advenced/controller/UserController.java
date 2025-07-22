@@ -1,7 +1,6 @@
 package com.myproject.springboot_advenced.controller;
 
 import com.myproject.springboot_advenced.domain.Users;
-import com.myproject.springboot_advenced.repository.UsersRepository;
 import com.myproject.springboot_advenced.service.UsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -21,7 +21,7 @@ public class AdminController {
     @GetMapping("/get-all")
     public List<String> getAllAdmins() {
         Optional<String> optional = SecurityUtils.getCurrentUsername();
-        String name = optional.get().trim();
+        String name = optional.get();
         return List.of("admin1", "admin2", "admin3", "admin4", "admin5", "admin6");
     }
 
