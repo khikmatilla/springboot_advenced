@@ -7,18 +7,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employees")
-public class EmployeeController {
+@RequestMapping("/api/students")
+public class StudentsController {
 
     @GetMapping
-    public String adminPage() {
-        return "Employee Page";
+    public String createStudent() {
+        return "Create student Page";
     }
 
-    @GetMapping("/get-all")
-    public List<String> getAllEmployees() {
-        return List.of("emp1", "emp2", "emp3", "emp4", "emp5", "emp6");
+    @GetMapping("/allStudents")
+    public List<String> allStudents() {
+        return List.of("student1", "student2", "student3");
     }
-
-
 }

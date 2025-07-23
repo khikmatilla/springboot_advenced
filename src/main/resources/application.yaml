@@ -11,3 +11,25 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  security:
+    oauth2:
+      client:
+          registration:
+            keycloak:
+              client-id: myapp1
+              client-secret: 3GaBRmxg09jSLNO89EeikY4EedC9Wxb1
+              provider: keycloak
+              authorization-grant-type: authorization_code
+              redirect-uri: http://localhost:8080/login/oauth2/code/keycloak
+              scope: openid, profile
+          provider:
+            keycloak:
+              issuer-uri: http://localhost:9080/realms/zaytun
+
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9080/realms/zaytun
+          principal-claim-name: preferred_username
+          audiences:
+            - myapp1
