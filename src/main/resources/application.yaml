@@ -17,19 +17,19 @@ spring:
       client:
           registration:
             keycloak:
-              client-id: myapp1
-              client-secret: 3GaBRmxg09jSLNO89EeikY4EedC9Wxb1
+              client-id: microservice
+              client-secret: Ky6SLS2C2xgwsHmkXi4QxfiwStJcFDct
               provider: keycloak
               authorization-grant-type: authorization_code
               redirect-uri: http://localhost:8080/login/oauth2/code/keycloak
               scope: openid, profile
           provider:
             keycloak:
-              issuer-uri: http://localhost:9080/realms/zaytun
+              issuer-uri: http://localhost:8081/realms/master
 
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9080/realms/zaytun
+          issuer-uri: http://localhost:8081/realms/master
           principal-claim-name: preferred_username
           audiences:
-            - myapp1
+            - microservice
