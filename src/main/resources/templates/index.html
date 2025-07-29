@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <!-- SockJS va STOMPJS kutubxonalarini yuklab oling -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+
+<h2>Chat</h2>
+
+<input id="fromUser" placeholder="Your Username"><br>
+<input id="toUser" placeholder="Send to username"><br>
+<input id="message" placeholder="Message"><br>
+<button onclick="connect(document.getElementById('fromUser').value)">Connect</button>
+<button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+<ul id="messages"></ul>
+
+
+<script>
+    let stompClient;
+
+    function connect(username) {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/user/' + username + '/queue/messages', function (msg) {
+                const message = JSON.parse(msg.body);
+                const li = document.createElement("li");
+                li.innerText = message.fromUserName + ": " + message.message;
+                document.getElementById("messages").appendChild(li);
+            });
+
+            document.getElementById("sendBtn").disabled = false;
+        });
+    }
+
+    function sendMessage() {
+        if (!stompClient || !stompClient.connected) {
+            alert("Iltimos, avval foydalanuvchi nomini kiriting va ulang!");
+            return;
+        }
+
+        const from = document.getElementById("fromUser").value;
+        const to = document.getElementById("toUser").value;
+        const message = document.getElementById("message").value;
+
+        stompClient.send("/app/chat", {}, JSON.stringify({
+            fromUserName: from,
+            toUserName: to,
+            message: message
+        }));
+    }
+</script>
+
+</body>
+</html>
