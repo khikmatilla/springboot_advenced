@@ -1,4 +1,4 @@
-package com.myproject.springboot_advenced.model;
+package com.myproject.springboot_advenced.security;
 
 import org.springframework.security.core.AuthenticationException;
 

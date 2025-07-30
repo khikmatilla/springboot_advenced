@@ -21,8 +21,8 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/all")
-    public List<String> getAllUsers() {
-        return userRepository.findAll().stream().map(User::getUserName).toList();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
     }
 
     @PostMapping("/logout")

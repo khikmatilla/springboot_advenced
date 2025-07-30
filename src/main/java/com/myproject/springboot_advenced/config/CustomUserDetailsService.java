@@ -1,8 +1,8 @@
 package com.myproject.springboot_advenced.config;
 
 import com.myproject.springboot_advenced.entity.AuthUser;
-import com.myproject.springboot_advenced.model.UserNotActivatedException;
-import com.myproject.springboot_advenced.repository.UsersRepository;
+import com.myproject.springboot_advenced.security.UserNotActivatedException;
+import com.myproject.springboot_advenced.repository.AuthUserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Component("userDetailService")
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UsersRepository usersRepository;
+    private final AuthUserRepository usersRepository;
 
-    public CustomUserDetailsService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public CustomUserDetailsService(AuthUserRepository authUserRepository) {
+        this.usersRepository = authUserRepository;
     }
 
     @Override

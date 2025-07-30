@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserJwtController {
+public class AuthUserJwtController {
 
     private final AuthenticationManager authenticationManager;
 
@@ -29,7 +29,7 @@ public class UserJwtController {
     private final UsersService usersService;
 
 
-    public UserJwtController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UsersService usersService) {
+    public AuthUserJwtController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UsersService usersService) {
         this.authenticationManager = authenticationManager;
 
         this.jwtTokenProvider = jwtTokenProvider;

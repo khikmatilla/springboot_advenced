@@ -47,8 +47,8 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable()) // CSRF himoyasini o‘chirib qo‘yamiz (stateless API uchun)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/login.html", "/home.html","index.html", "/js/**", "/css/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -77,7 +77,7 @@ public class SecurityConfiguration {
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // agar cookie/token kerak bo‘lsa
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

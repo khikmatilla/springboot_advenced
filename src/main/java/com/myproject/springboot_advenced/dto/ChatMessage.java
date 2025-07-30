@@ -1,4 +1,4 @@
-package com.myproject.springboot_advenced.entity;
+package com.myproject.springboot_advenced.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -17,8 +17,8 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
-                .simpDestMatchers("/app/**").authenticated()
-                .simpSubscribeDestMatchers("/user/**", "/queue/**").authenticated()
-                .anyMessage().denyAll();
+                .simpMessageDestMatchers("/app/**").authenticated() // yuboriladigan
+                .simpSubscribeDestMatchers("/user/**", "/queue/**").authenticated() // obuna bo‘lish
+                .anyMessage().denyAll(); // qolgan barchasiga ruxsat yo‘q
     }
 }

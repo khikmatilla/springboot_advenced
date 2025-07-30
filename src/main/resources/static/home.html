@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h2>Welcome to Chat</h2>
+<button onclick="logout()">Logout</button>
+
+<h3>Users</h3>
+<table id="userTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+    }
+
+    async function loadUsers() {
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('/api/users/all', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        if (!response.ok) {
+            alert("Failed to fetch users");
+            return;
+        }
+
+        const users = await response.json();
+        const tbody = document.querySelector("#userTable tbody");
+        tbody.innerHTML = "";
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.userName}</td>
+                    <td><button onclick="goToChat(${user.id})">Chat</button></td>
+                `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function goToChat(userId) {
+        window.location.href = `/index.html?userId=${userId}`;
+    }
+
+    window.onload = loadUsers;
+</script>
+</body>
+</html>

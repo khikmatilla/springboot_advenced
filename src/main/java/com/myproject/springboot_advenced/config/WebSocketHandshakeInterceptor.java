@@ -1,44 +1,45 @@
+// WebSocketHandshakeInterceptor.java
 package com.myproject.springboot_advenced.config;
 
 import com.myproject.springboot_advenced.security.JwtTokenProvider;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-
-import java.util.List;
 import java.util.Map;
 
+@Configuration
 public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public WebSocketHandshakeInterceptor() {
-        // JwtTokenProvider ni qanday olish sizning arxitekturangizga bog‘liq.
-        this.jwtTokenProvider = JwtTokenProvider.getInstance(); // o‘zgarishi mumkin
+    public WebSocketHandshakeInterceptor(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) {
-
-        List<String> auth = request.getHeaders().get("Authorization");
-        if (auth != null && !auth.isEmpty() && auth.get(0).startsWith("Bearer ")) {
-            String token = auth.get(0).substring(7);
-            if (jwtTokenProvider.validateToken(token)) {
-                Claims claims = jwtTokenProvider.getClaims(token);
-                attributes.put("userId", claims.getSubject());
-                return true;
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+                                   Map<String, Object> attributes) {
+        if (request instanceof ServletServerHttpRequest servletRequest) {
+            HttpServletRequest httpRequest = servletRequest.getServletRequest();
+            String token = httpRequest.getParameter("token");
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                UserDetails userDetails = jwtTokenProvider.getUserDetails(token);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                attributes.put("user", authentication);
+            } else {
+                return false;
             }
         }
-        response.setStatusCode(org.springframework.http.HttpStatus.FORBIDDEN);
-        return false;
+        return true;
     }
 
     @Override
