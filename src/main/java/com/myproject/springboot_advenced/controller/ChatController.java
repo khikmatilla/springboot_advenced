@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ChatController {
@@ -25,7 +26,8 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void send(ChatMessage chatMessage, Principal principal) {
-        String senderUserName = SecurityUtils.getCurrentUsername().toString();
+        Optional<String> optional = SecurityUtils.getCurrentUsername();
+        String senderUserName = optional.get().trim();
         chatMessage.setSender(senderUserName);
 
         Message message = new Message();
@@ -39,8 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("/api/messages")
-    @ResponseBody
-    public List<Message> getMyMessages(Principal principal) {
-        return messageRepository.findByReceiver(principal.getName());
+    public List<Message> getMyMessages() {
+        return messageRepository.findAll();
     }
 }
