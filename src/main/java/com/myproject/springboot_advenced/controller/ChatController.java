@@ -27,7 +27,7 @@ public class ChatController {
     @MessageMapping("/chat")
     public void send(ChatMessage chatMessage, Principal principal) {
         Optional<String> optional = SecurityUtils.getCurrentUsername();
-        String senderUserName = optional.get().trim();
+        String senderUserName = optional.get().toString();
         chatMessage.setSender(senderUserName);
 
         Message message = new Message();

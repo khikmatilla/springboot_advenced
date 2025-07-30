@@ -27,6 +27,7 @@ public class JwtTokenProvider {
     private final Key key;
     private final JwtParser jwtParser;
 
+
     public JwtTokenProvider() {
         byte[] keyBytes;
         String secret = "YXZlcnktc2VjdXJlLXNlY3JldC1rZXktd2l0aC1iYXNlNjQxMjM=";
@@ -84,5 +85,14 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
         User principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    public Claims getClaims(String token) {
+        String secretKey = "YXZlcnktc2VjdXJlLXNlY3JldC1rZXktd2l0aC1iYXNlNjQxMjM=";
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    }
+
+    public static JwtTokenProvider getInstance() {
+        return new JwtTokenProvider(); // yoki `@Component` qilib inject qilinsa, `@Autowired` bilan
     }
 }
