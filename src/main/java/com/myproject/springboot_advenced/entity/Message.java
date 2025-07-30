@@ -10,16 +10,13 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class Chat {
-
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private User fromUser;
-    @ManyToOne
-    private User toUser;
-    private String message;
-    private LocalDateTime createTime = LocalDateTime.now();
+    private String sender;
+    private String receiver;
+    private String content;
+    private LocalDateTime timestamp = LocalDateTime.now();
 
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+//@Controller
 public class ChatController1 {
 
     private final ChatService chatService;

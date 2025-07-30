@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
@@ -10,60 +10,58 @@
     <label for="userName">Username:</label><br>
     <input type="text" id="userName" name="userName" required><br><br>
 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
 
-            <label>
-                <input type="checkbox" id="rememberMe" name="rememberMe">
-                    Remember me
-            </label><br><br>
+    <label>
+        <input type="checkbox" id="rememberMe" name="rememberMe">
+        Remember me
+    </label><br><br>
 
-            <button type="submit">Login</button>
+    <button type="submit">Login</button>
 </form>
 
 <p id="result"></p>
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const userName = document.getElementById('userName').value;
-    const password = document.getElementById('password').value;
-    const rememberMe = document.getElementById('rememberMe').checked;
+        const userName = document.getElementById('userName').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
 
-    const loginData = {
-    userName: userName,
-    password: password,
-    rememberMe: rememberMe
-};
+        const loginData = {
+            userName: userName,
+            password: password,
+            rememberMe: rememberMe
+        };
 
-    try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json'
-},
-    body: JSON.stringify(loginData)
-});
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            });
 
-    if (response.ok) {
-    const data = await response.json();
-    const token = data.idToken; // yoki response.headers.get("Authorization") ham bo‘lishi mumkin
+            if (response.ok) {
+                const data = await response.json();
+                const token = data.idToken;
 
-    document.getElementById('result').textContent = 'Login successful. JWT: ' + token;
-    console.log('JWT token:', token);
-
-    // JWT tokenni localStorage yoki sessionStorage ga saqlash mumkin
-    localStorage.setItem('jwt', token);
-} else {
-    const errorText = await response.text();
-    document.getElementById('result').textContent = 'Login failed: ' + errorText;
-}
-} catch (error) {
-    console.error('Error:', error);
-    document.getElementById('result').textContent = 'Error: ' + error.message;
-}
-});
+                localStorage.setItem('jwt', token);
+                // Muvaffaqiyatli login bo‘ldi, foydalanuvchini index.html ga yo‘naltiramiz
+                window.location.href = "index.html";
+            } else {
+                const errorText = await response.text();
+                document.getElementById('result').textContent = 'Login failed: ' + errorText;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').textContent = 'Error: ' + error.message;
+        }
+    });
 </script>
 </body>
 </html>

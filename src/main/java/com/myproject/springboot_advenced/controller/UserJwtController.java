@@ -2,8 +2,7 @@ package com.myproject.springboot_advenced.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.myproject.springboot_advenced.dto.LoginVm;
-import com.myproject.springboot_advenced.entity.Users;
-import com.myproject.springboot_advenced.repository.UsersRepository;
+import com.myproject.springboot_advenced.entity.AuthUser;
 import com.myproject.springboot_advenced.security.JwtTokenProvider;
 import com.myproject.springboot_advenced.service.UsersService;
 
@@ -15,14 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -59,7 +53,7 @@ public class UserJwtController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Users> registerUser(@RequestBody Users user) {
+    public ResponseEntity<AuthUser> registerUser(@RequestBody AuthUser user) {
 
         if (!checkPasswordLength(user.getPassword())) {
             return new ResponseEntity("Password length must be between 4 and 16 characters", HttpStatus.CONFLICT);

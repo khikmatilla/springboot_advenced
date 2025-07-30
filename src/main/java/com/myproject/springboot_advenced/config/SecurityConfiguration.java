@@ -46,6 +46,7 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF himoyasini o‘chirib qo‘yamiz (stateless API uchun)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -54,7 +55,14 @@ public class SecurityConfiguration {
                 )
 
                 .cors(Customizer.withDefaults())
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+        ;
 
         return http.build();
     }
