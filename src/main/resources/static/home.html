@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>💬 Live Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>💬 Live Chat</h2>
+
+<label for="from">From:</label>
+<select id="from" onchange="registerUser()">
+    <option disabled selected>Choose your username</option>
+</select><br><br>
+
+<label for="to">To:</label>
+<select id="to">
+    <option disabled selected>Select a user to message</option>
+</select><br><br>
+
+<label for="content">Message:</label><br>
+<textarea id="content" rows="3" cols="40" placeholder="Your message"></textarea><br><br>
+
+<button onclick="sendMsg()">Send</button>
+
+<hr>
+<div id="chat"></div>
+
+<script>
+    let stompClient = null;
+
+    function connectSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/topic/messages', function (messageOutput) {
+                const msg = JSON.parse(messageOutput.body);
+                const chat = document.getElementById("chat");
+                const div = document.createElement("div");
+                div.innerHTML = `<strong>${msg.from} → ${msg.to}</strong>: ${msg.content}`;
+                chat.appendChild(div);
+            });
+        });
+    }
+
+    async function loadUsers() {
+        const res = await fetch('/api/users');
+        const users = await res.json();
+        const fromSelect = document.getElementById("from");
+        const toSelect = document.getElementById("to");
+
+        users.forEach(user => {
+            const optFrom = document.createElement("option");
+            optFrom.value = user.username;
+            optFrom.text = user.username;
+            fromSelect.appendChild(optFrom);
+
+            const optTo = document.createElement("option");
+            optTo.value = user.username;
+            optTo.text = user.username;
+            toSelect.appendChild(optTo);
+        });
+    }
+
+    // async function registerUser() {
+    //     const username = document.getElementById("from").value;
+    //     await fetch('/api/users/register', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ username })
+    //     });
+    // }
+
+    function sendMsg() {
+        const from = document.getElementById("from").value;
+        const to = document.getElementById("to").value;
+        const content = document.getElementById("content").value;
+
+        if (!from || !to || !content) {
+            alert("All fields are required!");
+            return;
+        }
+
+        stompClient.send("/app/chat.send", {}, JSON.stringify({ from, to, content }));
+        document.getElementById("content").value = "";
+    }
+
+    loadUsers();
+    connectSocket();
+</script>
+</body>
+</html>
