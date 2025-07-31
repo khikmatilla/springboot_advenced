@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (result.token) {
                 localStorage.setItem("token", result.token);
                 localStorage.setItem("username", username);
-                window.location.href = "/cobinet.html"; // login bo‘lgach shaxsiy kabinetga o‘tamiz
+                window.location.href = "/dashboard.html"; // login bo‘lgach shaxsiy kabinetga o‘tamiz
             } else {
                 errorDiv.textContent = "Token not found in response.";
             }

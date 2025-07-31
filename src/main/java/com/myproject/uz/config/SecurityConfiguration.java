@@ -21,6 +21,18 @@ import java.util.List;
 @Configuration
 public class SecurityConfiguration {
 
+    String[] WHITELIST = {
+            "/login.html",
+            "/chat.html",
+            "dashboard.html",
+            "new-chat.html",
+            "/js/**",
+            "/ws/**",
+            "/css/**",
+            "/api/auth/**",
+            "/favicon.ico"
+    };
+
     private final JwtTokenFilter jwtTokenFilter;
 
     public SecurityConfiguration(JwtTokenFilter jwtTokenFilter) {
@@ -43,9 +55,7 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/login.html", "/home.html","/cobinet.html", "/js/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

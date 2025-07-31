@@ -1,13 +1,7 @@
 package com.myproject.uz.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -18,20 +12,21 @@ import java.time.LocalDateTime;
 @Entity
 public class Message {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String content;
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     @ManyToOne
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @ManyToOne
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     @ManyToOne
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
-
-
 }
