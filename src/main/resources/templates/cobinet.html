@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Cabinet</title>
+    <script defer src="/js/cabinet.js"></script>
+    <style>
+        #userList {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 250px;
+        }
+        .user {
+            cursor: pointer;
+            padding: 5px;
+        }
+        .user:hover {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+<h2>Welcome, <span id="currentUser"></span></h2>
+<button onclick="logout()">Logout</button>
+
+<h3>Online Users:</h3>
+<div id="userList"></div>
+</body>
+</html>

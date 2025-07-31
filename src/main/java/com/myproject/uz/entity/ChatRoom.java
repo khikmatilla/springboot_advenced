@@ -1,24 +1,27 @@
 package com.myproject.uz.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class User {
+public class ChatRoom {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
-    private String username;
-    private String password;
-    private String fullName;
+    @ManyToOne
+    private User user1;
 
-
+    @ManyToOne
+    private User user2;
 }

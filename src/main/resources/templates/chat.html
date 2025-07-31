@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>chat</title>
+</head>
+<body>
+<h2>Chat: [[${chatId}]]</h2>
+<div id="messages"></div>
+<input id="msg" placeholder="Write..."/>
+<button onclick="sendMsg()">Send</button>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script>
+  const username = '[[${username}]]';
+  const chatId = '[[${chatId}]]';
+
+  const socket = new SockJS('/ws');
+  const stomp = Stomp.over(socket);
+
+  stomp.connect({}, () => {
+    stomp.subscribe('/topic/chat/' + chatId, (msg) => {
+      const data = JSON.parse(msg.body);
+      document.getElementById("messages").innerHTML += `<div><b>${data.from} → ${data.to}</b>: ${data.content}</div>`;
+    });
+  });
+
+  function sendMsg() {
+    const content = document.getElementById("msg").value;
+    stomp.send("/app/chat.send", {}, JSON.stringify({from: username, chatId, content}));
+    document.getElementById("msg").value = "";
+  }
+</script>
+
+</body>
+</html>

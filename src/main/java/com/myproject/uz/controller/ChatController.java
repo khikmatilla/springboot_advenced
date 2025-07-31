@@ -1,45 +1,26 @@
 package com.myproject.uz.controller;
 
-import com.myproject.uz.dto.ChatMessage;
-import com.myproject.uz.entity.Message;
-import com.myproject.uz.repository.MessageRepository;
-import com.myproject.uz.security.SecurityUtils;
+import com.myproject.uz.entity.ChatRoom;
 import com.myproject.uz.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
-import static com.myproject.uz.security.SecurityUtils.getCurrentUsername;
-
-@Controller
+@RestController
+@RequestMapping("/api/chats")
 public class ChatController {
-
-    private final ChatService chatService;
-
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    ChatService chatService;
 
-    @Autowired
-    private MessageRepository messageRepository;
-
-    public ChatController(ChatService chatService) {
-        this.chatService = chatService;
+    @GetMapping
+    public List<ChatRoom> userChats(Principal principal) {
+        return chatService.getUserChats(principal.getName());
     }
 
-    @MessageMapping("/chat")
-    public void send(ChatMessage chatMessage) {
-        chatService.sendMessage(chatMessage);
-
-    }
-
-    @GetMapping("/api/messages")
-    public List<Message> getMyMessages() {
-        return messageRepository.findAll();
+    @PostMapping("/create")
+    public ChatRoom create(@RequestParam String targetUsername, Principal principal) {
+        return chatService.createChat(principal.getName(), targetUsername);
     }
 }
