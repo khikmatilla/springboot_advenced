@@ -28,7 +28,7 @@ public class AuthUser implements Serializable {
     private Boolean activated;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_authorities",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
