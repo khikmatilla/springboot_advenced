@@ -4,6 +4,7 @@ import com.myproject.uz.dto.ChatMessage;
 import com.myproject.uz.entity.Message;
 import com.myproject.uz.repository.MessageRepository;
 import com.myproject.uz.security.SecurityUtils;
+import com.myproject.uz.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,8 +15,12 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.myproject.uz.security.SecurityUtils.getCurrentUsername;
+
 @Controller
 public class ChatController {
+
+    private final ChatService chatService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -23,21 +28,14 @@ public class ChatController {
     @Autowired
     private MessageRepository messageRepository;
 
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
+
     @MessageMapping("/chat")
-    public void send(ChatMessage chatMessage, Principal principal) {
-        Optional<String> currentUsername = SecurityUtils.getCurrentUsername();
-        String trim = currentUsername.get().trim();
+    public void send(ChatMessage chatMessage) {
+        chatService.sendMessage(chatMessage);
 
-        chatMessage.setSender(trim);
-
-        Message message = new Message();
-        message.setSender(trim);
-        message.setReceiver(chatMessage.getReceiver());
-        message.setContent(chatMessage.getContent());
-        messageRepository.save(message);
-
-        messagingTemplate.convertAndSendToUser(
-                chatMessage.getReceiver(), "/queue/messages", chatMessage);
     }
 
     @GetMapping("/api/messages")
