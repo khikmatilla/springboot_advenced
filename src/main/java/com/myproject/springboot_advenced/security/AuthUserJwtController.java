@@ -1,10 +1,7 @@
-package com.myproject.springboot_advenced.controller;
+package com.myproject.springboot_advenced.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.myproject.springboot_advenced.dto.LoginVm;
 import com.myproject.springboot_advenced.entity.AuthUser;
-import com.myproject.springboot_advenced.security.JwtTokenProvider;
-import com.myproject.springboot_advenced.service.UsersService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

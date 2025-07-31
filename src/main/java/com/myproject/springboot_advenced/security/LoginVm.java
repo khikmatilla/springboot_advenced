@@ -1,4 +1,4 @@
-package com.myproject.springboot_advenced.dto;
+package com.myproject.springboot_advenced.security;
 
 import lombok.Getter;
 import lombok.Setter;

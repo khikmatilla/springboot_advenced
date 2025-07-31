@@ -1,8 +1,6 @@
-package com.myproject.springboot_advenced.config;
+package com.myproject.springboot_advenced.security;
 
 import com.myproject.springboot_advenced.entity.AuthUser;
-import com.myproject.springboot_advenced.security.UserNotActivatedException;
-import com.myproject.springboot_advenced.repository.AuthUserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

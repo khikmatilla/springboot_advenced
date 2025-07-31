@@ -1,4 +1,4 @@
-package com.myproject.springboot_advenced.repository;
+package com.myproject.springboot_advenced.security;
 
 import com.myproject.springboot_advenced.entity.AuthUser;
 import jakarta.validation.constraints.NotNull;

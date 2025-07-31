@@ -1,7 +1,6 @@
-package com.myproject.springboot_advenced.service;
+package com.myproject.springboot_advenced.security;
 
 import com.myproject.springboot_advenced.entity.AuthUser;
-import com.myproject.springboot_advenced.repository.AuthUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
