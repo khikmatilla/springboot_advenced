@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const userName = document.getElementById("username");
-        const password = document.getElementById("password");
+        const userName = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
         const rememberMe = document.getElementById("rememberMe");
         console.log(userName)
         try {
