@@ -41,8 +41,8 @@
             const receiverSelect = document.getElementById('receiver');
             users.forEach(user => {
                 const option = document.createElement('option');
-                option.value = user.username;
-                option.textContent = user.username;
+                option.value = user.userName;
+                option.textContent = user.userName;
                 receiverSelect.appendChild(option);
             });
         })
