@@ -19,11 +19,12 @@ public class WebSocketMessageController {
     private final MessageService messageService;
 
     @MessageMapping("/chat")
-    public void sendMessage(MessageRequest messageRequest, Authentication authentication) {
-        // Principal'dan foydalanuvchi nomini olamiz
+    public void sendMessage(MessageRequest messageRequest ) {
+
         //String senderUsername = authentication.getName();
 
-        MessageDto savedMessage = messageService.saveMessage(messageRequest,authentication);
+
+        MessageDto savedMessage = messageService.saveMessage(messageRequest, messageRequest.getUsername());
 
         messagingTemplate.convertAndSend(
                 "/topic/messages/" + messageRequest.getReceiverUsername(),

@@ -9,6 +9,7 @@ import com.myproject.uz.mapper.MessageMapper;
 import com.myproject.uz.repository.ChatRoomRepository;
 import com.myproject.uz.repository.MessageRepository;
 import com.myproject.uz.repository.UserRepository;
+import com.myproject.uz.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,11 +44,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageDto saveMessage(MessageRequest messageRequest, Authentication authentication) {
+    public MessageDto saveMessage(MessageRequest messageRequest, String sederUsername) {
 
-        // String name = authentication.getName();
+//        // String name = authentication.getName();
+//
+//        Optional<String> currentUsername = SecurityUtils.getCurrentUsername();
+//        String name = currentUsername.get();
 
-        User sender = userRepository.findByUsername("user")
+        User sender = userRepository.findByUsername(sederUsername)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
         User receiver = userRepository.findByUsername(messageRequest.getReceiverUsername())

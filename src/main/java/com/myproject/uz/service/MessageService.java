@@ -9,7 +9,7 @@ import java.util.List;
 public interface MessageService {
     List<MessageDto> getMessagesWith(Long receiverId);
 
-    MessageDto saveMessage(MessageRequest messageRequest, Authentication authentication);
+    MessageDto saveMessage(MessageRequest messageRequest, String sederUsername);
 
     List<MessageDto> getMessagesBetween(String senderUsername, String receiverUsername);
 }

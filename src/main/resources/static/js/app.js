@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json(); // token ni kutamiz
             if (result.token) {
                 localStorage.setItem("token", result.token);
-                localStorage.setItem("username", username);
+                localStorage.setItem("username", userName);
                 window.location.href = "/dashboard.html"; // login bo‘lgach shaxsiy kabinetga o‘tamiz
             } else {
                 errorDiv.textContent = "Token not found in response.";

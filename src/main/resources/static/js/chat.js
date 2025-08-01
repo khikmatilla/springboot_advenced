@@ -40,6 +40,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.getElementById("messageInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault(); // Enter bosishda forma yuborilmasligi uchun
+        sendMessage(); // Sizning xabaringizni yuboruvchi funksiyangiz
+    }
+});
+
 function sendMessage() {
     const input = document.getElementById("messageInput");
     const content = input.value.trim();
@@ -47,15 +54,17 @@ function sendMessage() {
 
     const message = {
         content: content,
-        receiverUsername: receiverUsername
+        receiverUsername: receiverUsername,
+        username: localStorage.getItem("username") || "N/A"
     };
 
 
 
     // STOMP orqali yuborish
     stompClient.send("/app/chat", {}, JSON.stringify(message));
-    displayMessage(username, content); // o‘zingiz yuborgan xabarni ko‘rsatish
+    // displayMessage(username, content); // o‘zingiz yuborgan xabarni ko‘rsatish
     input.value = "";
+    input.focus();
 }
 console.log("userName from localStorage:", senderUsername);
 
