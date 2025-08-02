@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stompClient.connect({}, () => {
         // Chat xonasiga obuna bo‘lish
+        //stompClient.subscribe("/user/queue/messages", (message) => {
         stompClient.subscribe(`/topic/messages/${receiverUsername}`, (message) => {
             const msg = JSON.parse(message.body);
             displayMessage(msg.sender, msg.content);
@@ -66,7 +67,7 @@ function sendMessage() {
     input.value = "";
     input.focus();
 }
-console.log("userName from localStorage:", senderUsername);
+
 
 
 function displayMessage(sender, content) {

@@ -32,3 +32,8 @@ public class WebSocketMessageController {
         );
     }
 }
+// messagingTemplate.convertAndSendToUser(
+//        messageRequest.getReceiverUsername(),
+//                "/queue/messages",
+//                        messageRequest.getContent()
+//        );
