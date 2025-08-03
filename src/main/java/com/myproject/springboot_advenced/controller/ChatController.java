@@ -1,33 +1,47 @@
 package com.myproject.springboot_advenced.controller;
 
-import com.myproject.springboot_advenced.dto.MessageDto;
+import com.myproject.springboot_advenced.dto.ChatNotification;
 import com.myproject.springboot_advenced.entity.ChatMessage;
 import com.myproject.springboot_advenced.repository.ChatMessageRepository;
+import com.myproject.springboot_advenced.service.ChatMessageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
+@RequiredArgsConstructor
 @Controller
 public class ChatController {
 
+    private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final ChatMessageRepository chatMessageRepository;
 
-    public ChatController(SimpMessagingTemplate messagingTemplate, ChatMessageRepository repo) {
-        this.messagingTemplate = messagingTemplate;
-        this.chatMessageRepository = repo;
+    @MessageMapping("/chat")
+    public void processMessage(@Payload ChatMessage chatMessage) {
+        ChatMessage savedMsg = chatMessageService.save(chatMessage);
+        ChatNotification notification = ChatNotification.builder()
+                .id(savedMsg.getId())
+                .senderId(savedMsg.getSenderId())
+                .recipientId(savedMsg.getRecipientId())
+                .content(savedMsg.getContent())
+                .build();
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getRecipientId(),
+                "/queue/messages",
+                notification);
     }
 
-    @MessageMapping("/chat.send")
-    public void sendMessage(@Payload MessageDto messageDto) {
-        ChatMessage saved = new ChatMessage();
-        saved.setFromUser(messageDto.getFrom());
-        saved.setToUser(messageDto.getTo());
-        saved.setContent(messageDto.getContent());
-        chatMessageRepository.save(saved);
-
-        messagingTemplate.convertAndSend("/topic/messages", messageDto);
+    @GetMapping("/messages/{senderId}/{recipientId}")
+    public ResponseEntity<List<ChatMessage>> findChatMessages(
+            @PathVariable("senderId") String senderId,
+            @PathVariable("recipientId") String recipientId) {
+        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
 }
 

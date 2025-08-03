@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    List<ChatMessage> findByFromUserOrToUser(String from, String to);
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
+    List<ChatMessage> findByChatId(String s);
 }

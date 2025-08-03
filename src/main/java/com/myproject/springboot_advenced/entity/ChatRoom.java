@@ -6,22 +6,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class ChatMessage {
+public class ChatRoom {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
     private String chatId;
     private String senderId;
     private String recipientId;
-    private String content;
-    private LocalDateTime timestamp = LocalDateTime.now();
-
 }

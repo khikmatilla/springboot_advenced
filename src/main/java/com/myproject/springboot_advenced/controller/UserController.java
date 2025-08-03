@@ -1,28 +1,40 @@
 package com.myproject.springboot_advenced.controller;
 
-import com.myproject.springboot_advenced.entity.ChatUser;
-import com.myproject.springboot_advenced.repository.ChatUserRepository;
+import com.myproject.springboot_advenced.entity.User;
+import com.myproject.springboot_advenced.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/users")
+
+@RequiredArgsConstructor
+@Controller
 public class UserController {
 
-    private final ChatUserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(ChatUserRepository repo) {
-        this.userRepository = repo;
+    @MessageMapping("/user.addUser")
+    @SendTo("/user/public")
+    public User addUser(@Payload User user) {
+        userService.save(user);
+        return user;
     }
 
-    @GetMapping
-    public List<ChatUser> getAllUsers() {
-        return userRepository.findAll();
+    @MessageMapping("/user.disconnectUser")
+    @SendTo("/user/public")
+    public User disconnect(@Payload User user) {
+        userService.disconnect(user);
+        return user;
     }
 
-    @PostMapping("/register")
-    public ChatUser register(@RequestBody ChatUser user) {
-        return userRepository.save(user);
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllOnlineUsers() {
+        return ResponseEntity.ok(userService.findOnlineUsers());
     }
 }
