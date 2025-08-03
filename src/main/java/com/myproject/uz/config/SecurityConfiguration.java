@@ -27,6 +27,7 @@ public class SecurityConfiguration {
             "dashboard.html",
             "new-chat.html",
             "/js/**",
+            "/chat/**",
             "/ws/**",
             "/css/**",
             "/api/auth/**",

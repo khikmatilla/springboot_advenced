@@ -26,9 +26,11 @@ public class WebSocketMessageController {
 
         MessageDto savedMessage = messageService.saveMessage(messageRequest, messageRequest.getUsername());
 
-        messagingTemplate.convertAndSend(
-                "/topic/messages/" + messageRequest.getReceiverUsername(),
-                savedMessage
+        String queueName = "/queue/messages";
+        messagingTemplate.convertAndSendToUser(
+                messageRequest.getReceiverUsername(),
+                queueName,
+                messageRequest.getContent()
         );
     }
 }

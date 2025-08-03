@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stompClient.connect({}, () => {
         // Chat xonasiga obuna bo‘lish
-        //stompClient.subscribe("/user/queue/messages", (message) => {
-        stompClient.subscribe(`/topic/messages/${receiverUsername}`, (message) => {
+        stompClient.subscribe("/user/queue/messages", (message) => {
+        //stompClient.subscribe(`/topic/messages/${receiverUsername}`, (message) => {
             const msg = JSON.parse(message.body);
             displayMessage(msg.sender, msg.content);
         });
@@ -63,7 +63,7 @@ function sendMessage() {
 
     // STOMP orqali yuborish
     stompClient.send("/app/chat", {}, JSON.stringify(message));
-    // displayMessage(username, content); // o‘zingiz yuborgan xabarni ko‘rsatish
+    displayMessage(username, content); // o‘zingiz yuborgan xabarni ko‘rsatish
     input.value = "";
     input.focus();
 }
