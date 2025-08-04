@@ -6,10 +6,6 @@ import com.myproject.uz.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import java.security.Principal;
 
 @org.springframework.stereotype.Controller
 @RequiredArgsConstructor
