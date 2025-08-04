@@ -3,10 +3,17 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #ffffff 50%, #b19cd9 50%);
+    background: #ffffff;
     color: #000;
-}
 
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+}
 h2 {
     text-align: center;
     margin-top: 20px;

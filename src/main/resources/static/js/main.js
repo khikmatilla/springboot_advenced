@@ -14,9 +14,12 @@ let fullname = null;
 let selectedUserId = null;
 
 function connect(event) {
+    chatPage.style.display = "none";
     nickname = document.querySelector('#nickname').value.trim();
     fullname = document.querySelector('#fullName').value.trim();
     if (nickname && fullName) {
+        usernamePage.style.display = "none";
+        chatPage.style.display = "flex";
         usernamePage.classList.add("hidden");
         chatPage.classList.remove("hidden");
 
@@ -25,40 +28,63 @@ function connect(event) {
 
         stompClient.connect({}, onConnected, onError);
     }
-    event.preventDefault()
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(user) {
+        usernamePage.style.display = "none";
+        chatPage.style.display = "flex";
+        nickname = user?.nickName;
+        fullname = user?.fullName;
+        if (user?.nickName && user?.fullName) {
+            usernamePage.classList.add("hidden");
+            chatPage.classList.remove("hidden");
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, onConnected, onError);
+        }
+
+    }
+
+    if(event) {
+        event.preventDefault()
+    }
+
 }
 
     function onConnected(){
 
-     stompClient.subscribe('/user/${username}/queue/messages', onMassageReceived);
+     stompClient.subscribe('/user/' + nickname + '/queue/messages', onMassageReceived);
      stompClient.subscribe('/user/public', onMassageReceived);
 
      // register the connected user
      stompClient.send('/app/user.addUser',
          {},
          JSON.stringify({nickName:nickname, fullName:fullname, status: 'ONLINE'}));
-     document.querySelector('#connected-user-fullname').textContent = fullname;
+     // document.querySelector('#connected-user-fullname').textContent = fullname;
+
+        localStorage.setItem("user", JSON.stringify({nickName:nickname, fullName:fullname, status: 'ONLINE'}))
      // find and display the connected user
         findAndDisplayConnectedUser().then()
     }
     
     async function findAndDisplayConnectedUser() {
+        const connectedUsersList = document.querySelector('#connectedUsers');
         const connectedUserResponse = await fetch('/users');
         let connectedUsers = await connectedUserResponse.json();
         connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
-        const connectedUserlist = document.getElementById('connectedUsers');
 
         connectedUsersList.innerHTML = '';
-
-        connectedUsers.forEach(user => {
+        connectedUsers.forEach((user, index) => {
             appendUserElement(user, connectedUsersList);
-            if (connectedUsers.index(user) < connectedUsers.length -1){
-                const separator = document.createElement('li');
-                separator.classList.add('separator');
-                connectedUsersList.appendChild(separator);
 
-            }
-        })
+            // if (index < connectedUsers.length - 1) {
+            //     const separator = document.createElement('li');
+            //     separator.classList.add('separator');
+            //     connectedUsersList.appendChild(separator);
+            // }
+        });
           
 
 
@@ -68,16 +94,27 @@ function connect(event) {
         const listItem = document.createElement('li');
         listItem.classList.add('user-item');
         listItem.id = user.nickName;
-
+        listItem.style.display = "flex";
+        listItem.style.alignItems = "center";
+        listItem.style.gap = "10px"
         const userImaga = document.createElement('img');
-        userImaga.src = '../img/user_icon.png';
+        userImaga.src = '../img/user.jfif';
         userImaga.alt = user.fullName;
-
+        userImaga.width = 30;
+        userImaga.height = 30;
+        userImaga.style.borderRadius = "100%";
+        userImaga.style.border = "1px solid #000"
         const userNameSpan = document.createElement('span');
         userNameSpan.textContent = user.fullName;
 
         const receivedMsgs = document.createElement('span');
-        receivedMsgs.textContent = '0';
+        const isOnline = user?.status === "ONLINE"
+        receivedMsgs.textContent = "";
+        receivedMsgs.style.width = "10px";
+        receivedMsgs.style.height = "10px";
+        receivedMsgs.style.borderRadius = "100%";
+        receivedMsgs.style.backgroundColor = isOnline ? "green" : "E0E0E0";
+
         receivedMsgs.classList.add('nbr-msg', 'hidden');
 
         listItem.appendChild(userImaga);
@@ -126,7 +163,7 @@ function connect(event) {
       }
       const message = document.createElement('p');
       message.textContent = content;
-      messageContainer.appendChild(messageContainer);
+      messageContainer.appendChild(message);
       chatArea.appendChild(messageContainer);
     }
     
@@ -135,18 +172,20 @@ function connect(event) {
     }
 
     function sendMessage(event) {
-        const messageContent = messageInput.value.trim();
+        event.preventDefault();
+        let messageContent = messageInput.value.trim();
         if (messageContent && stompClient){
            const chatMessage = {
                senderId: nickname,
                recipientId: selectedUserId,
                content: messageContent,
-               timestamp: new Date()
            };
            stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
            displayMessage(nickname, messageContent);
+          messageInput.value = ""
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
-        event.preventDefault();
+
 
     }
 
@@ -163,7 +202,8 @@ function connect(event) {
              messageForm.classList.add('hidden');
          }
 
-         const notifiedUser = document.querySelector('${message.senderId}');
+
+       const notifiedUser = document.querySelector(`#${message.senderId}`);
          if (notifiedUser && notifiedUser.classList.contains('active')){
              const nbrMsg = notifiedUser.querySelector('.nbr-msg');
              nbrMsg.classList.remove('hidden');
@@ -174,14 +214,15 @@ function connect(event) {
     function onLogout() {
       stompClient.send('/app/user/disconnectUser',
           {},
-          JSON.stringify({nickName:nickname, fullName:fullname, status: 'ONLINE'}));
+          JSON.stringify({nickName:nickname, fullName:fullname, status: 'OFFLINE'}));
+      localStorage.removeItem("user")
       window.location.reload();
     }
 
     usernameForm.addEventListener('submit', connect, true);
 
-    usernameForm.addEventListener('submit', sendMessage, true);
+    messageForm.addEventListener('submit', sendMessage, true);
 
-    logout.addEventListener('click', onLogout, true);
+    logout.addEventListener('click', onLogout);
 
-    window.onbeforeunload = () => onLogout();
+    // window.onbeforeunload = () => onLogout();

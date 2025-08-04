@@ -9,50 +9,94 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="/js/main.js" defer></script>
 </head>
+<style>
+    .message {
+        border-radius: 10px;
+        word-wrap: break-word;
+    }
+
+    .sender {
+
+
+        align-self: flex-end; /* o‘ng taraf */
+        text-align: right;
+    }
+
+    .receiver {
+        align-self: flex-start; /* chap taraf */
+        text-align: left;
+    }
+    .sender > p{
+        background-color: #DCF8C6;
+        display: inline-flex;
+        padding: 5px 10px;
+        border-radius: 30px;
+        border-bottom-left-radius: unset;
+        margin: 4px;
+    }
+
+    .receiver > p {
+        background-color: #ECECEC;
+        display: inline-flex;
+        padding: 5px 10px;
+        border-radius: 30px;
+        border-bottom-right-radius: unset;
+        margin: 4px;
+
+    }
+</style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            connect();
+        });
+    </script>
 <body>
+<div class="container">
+    <h2>💬 Live Chat</h2>
 
-<h2>💬 Live Chat</h2>
+    <div class="user-form" id="username-page">
+        <h2>Enter Chatroom</h2>
+        <form id="usernameForm">
+            <label for="nickname">Nickname</label>
+            <input type="text" id="nickname" name="nickname" required>
 
-<div class="user-form" id="username-page">
-    <h2>Enter Chatroom</h2>
-    <form id="usernameForm">
-        <label for="nickname">Nickname</label>
-        <input type="text" id="nickname" name="nickname" required>
+            <label for="fullName">Real Name</label>
+            <input type="text" id="fullName" name="realname" required>
 
-        <label for="fullName">Real Name</label>
-        <input type="text" id="fullName" name="realname" required>
-
-        <button type="submit">Enter ChatRoom</button>
-    </form>
-</div>
-
-<div class="chat-container hidden" id="chat-page">
-    <div class="users-list">
-        <div class="users-list-container">
-            <h2>Online Users</h2>
-            <ul id="connectedUsers">
-                <!-- Foydalanuvchilar dinamik qo‘shiladi -->
-            </ul>
-        </div>
-        <div>
-            <p id="connected-user-fullname">Connected User</p>
-            <a class="logout" href="javascript:void(0)" id="logout">Logout</a>
-        </div>
-    </div>
-
-    <div class="chat-area">
-        <div id="chat-messages" class="chat-messages">
-            <!-- Xabarlar shu yerga tushadi -->
-        </div>
-
-        <form id="messageForm" name="messageForm" class="hidden">
-            <div class="message-input">
-                <input autocomplete="off" type="text" id="message" placeholder="Type your message..." />
-                <button type="submit">Send</button>
-            </div>
+            <button type="submit">Enter ChatRoom</button>
         </form>
     </div>
+
+    <div class="chat-container hidden" id="chat-page">
+        <div class="users-list">
+            <div class="users-list-container">
+                <h2>Users</h2>
+                <ul id="connectedUsers">
+                    <!-- Foydalanuvchilar dinamik qo‘shiladi -->
+                </ul>
+            </div>
+            <div>
+                <!--            <p id="connected-user-fullname">Connected User</p>-->
+                <button class="logout" id="logout" type="submit">Logout</button>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div id="chat-messages" class="chat-messages">
+                <!-- Xabarlar shu yerga tushadi -->
+            </div>
+
+            <form id="messageForm" name="messageForm" class="hidden">
+                <div class="message-input">
+                    <input autocomplete="off" type="text" id="message" placeholder="Type your message..." />
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
 
 </body>
 </html>

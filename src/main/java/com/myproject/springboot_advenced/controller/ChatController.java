@@ -26,7 +26,7 @@ public class ChatController {
     public void processMessage(@Payload ChatMessage chatMessage) {
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
         ChatNotification notification = ChatNotification.builder()
-                .id(savedMsg.getId())
+                .chatId(savedMsg.getChatId())
                 .senderId(savedMsg.getSenderId())
                 .recipientId(savedMsg.getRecipientId())
                 .content(savedMsg.getContent())

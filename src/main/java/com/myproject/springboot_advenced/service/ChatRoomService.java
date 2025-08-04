@@ -18,10 +18,10 @@ public class ChatRoomService {
             String recipientId,
             boolean createNewChatRoomIfNotExist) {
         return chatRoomRepository.findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getId)
+                .map(ChatRoom::getChatId)
                 .or(() ->{
                     if (createNewChatRoomIfNotExist) {
-                        var chatId = createChatId(senderId, recipientId);
+                        String chatId = createChatId(senderId, recipientId);
                         return Optional.of(chatId);
                     }
                     return Optional.empty();

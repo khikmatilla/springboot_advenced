@@ -28,6 +28,6 @@ public class UserService {
     }
 
     public List<User> findOnlineUsers() {
-        return userRepository.findOnlineUsers(Status.ONLINE);
+        return userRepository.findAll();
     }
 }

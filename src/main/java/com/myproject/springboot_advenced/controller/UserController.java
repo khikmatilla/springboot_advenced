@@ -26,7 +26,7 @@ public class UserController {
         return user;
     }
 
-    @MessageMapping("/user.disconnectUser")
+    @MessageMapping("/user/disconnectUser")
     @SendTo("/user/public")
     public User disconnect(@Payload User user) {
         userService.disconnect(user);

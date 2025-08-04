@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
-    private ChatRoomService chatRoomService;
+    private final ChatRoomService chatRoomService;
 
     public ChatMessage save(ChatMessage chatMessage) {
         var chatId = chatRoomService.getChatRoomId(
@@ -28,7 +28,7 @@ public class ChatMessageService {
         var chatId = chatRoomService.getChatRoomId(
                 senderId,
                 recipientId,
-                false
+                true
         );
         return chatId.map(chatMessageRepository::findByChatId).orElse(new ArrayList<>());
     }

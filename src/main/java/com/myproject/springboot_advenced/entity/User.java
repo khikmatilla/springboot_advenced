@@ -11,8 +11,6 @@ import lombok.Setter;
 @Table(name = "websocket_user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
     private String nickName;
     private String fullName;
     @Enumerated(EnumType.STRING)
