@@ -33,12 +33,12 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public BaseResponse<JsonNode> checkPerformTransaction(CheckPerformTransactionRequest request) {
 
-        long orderId;
+        String orderId;
         if (!request.getAccount().containsKey("phone")) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
         }
-        orderId = Long.parseLong(request.getAccount().get("phone"));
-        Order order = orderRepository.findById(orderId).orElse(null);
+        orderId = request.getAccount().get("phone");
+        Order order = orderRepository.findByContactAndStatus(orderId, OrderStatus.FINISHED).orElse(null);
 
         if (order == null) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
@@ -55,14 +55,14 @@ public class TransactionServiceImpl implements TransactionService {
     public BaseResponse<TransactionDTO> createTransaction(CreateTransactionRequest request) {
         log.info("createTransaction: {}", request);
 
-        long phoneNum;
+        String phoneNum;
         if (!request.getAccount().containsKey("phone")) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
         }
 
-        phoneNum = Long.parseLong((request.getAccount().get("phone")));
+        phoneNum = request.getAccount().get("phone");
 
-        var order = orderRepository.findById(phoneNum).orElse(null);
+        var order = orderRepository.findByContactAndStatus(phoneNum, OrderStatus.FINISHED).orElse(null);
 
         if (order == null) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
@@ -75,13 +75,15 @@ public class TransactionServiceImpl implements TransactionService {
                 .transactionId(request.getId())
                 .amount(request.getAmount())
                 .state(TransactionState.CREATED)
+                .time(request.getTime())
                 .createdTime(LocalDateTime.now())
                 .order(order)
                 .build();
 
         log.info("transaction: {}", transaction);
+        Transaction save = transactionRepository.save(transaction);
 
-        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
+        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(save));
     }
 
     @Override

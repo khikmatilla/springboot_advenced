@@ -29,10 +29,8 @@ public class CreateTransactionService implements PaymeService {
 
         log.info("CreateTransactionRequest: {}", createTransactionRequest);
 
-        String orderId = createTransactionRequest.getAccount().get("order_id");
-
         BaseResponse<TransactionDTO> body = transactionService.createTransaction(createTransactionRequest);
-
+        String orderId = String.valueOf(body.getData().getOrderId());
 
         if (body != null && Objects.equals(body.getMessage(), "SUCCESS") && body.getData() != null) {
             var createTransactionResponse = new CreateTransactionResponse(
