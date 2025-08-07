@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 
-import static com.myproject.springboot_advenced.dto.PaymentMessage.TRANSACTION_NOT_FOUND;
+import static com.myproject.springboot_advenced.dto.PaymentMessage.*;
 import static com.myproject.springboot_advenced.dto.TransactionState.CANCELED1;
 import static com.myproject.springboot_advenced.dto.TransactionState.SUCCESS;
 
@@ -27,7 +28,23 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Override
-    public BaseResponse<JsonNode> checkPerformTransaction(CheckPerformTransactionRequest request) {
+    public BaseResponse<JsonNode> checkPerformTransaction(Long amount, Map<String, String> account) {
+
+        String phoneNum;
+        if (!account.containsKey("phone")) {
+            return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
+        }
+        phoneNum = (account.get("phone"));
+        var order = orderRepository.findByPhoneNumber(phoneNum).orElse(null);
+
+        if (order == null) {
+            return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
+        }
+
+        if (!Objects.equals(order.getTotalAmount(), amount)) {
+            return new BaseResponse<>(false, INCORRECT_AMOUNT.name());
+        }
+
         return new BaseResponse<>(true, PaymentMessage.SUCCESS.name());
     }
 

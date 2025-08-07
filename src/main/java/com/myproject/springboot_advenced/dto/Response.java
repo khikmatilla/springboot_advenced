@@ -7,16 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
-    private JsonNode result;
+    private Map<String, Object> result;
     private Error error;
 
-    public Response(JsonNode result) {
+    public Response(Map<String, Object> result) {
         this.result = result;
         this.error = null;
     }
