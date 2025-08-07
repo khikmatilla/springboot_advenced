@@ -10,9 +10,8 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateTransactionRequest {
-    private Long orderId;
     private String id;
-    private Long time;
-    private Long amount;
+    private long time;
+    private long amount;
     Map<String, String> account;
 }

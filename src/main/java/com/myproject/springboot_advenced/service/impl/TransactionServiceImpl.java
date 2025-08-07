@@ -2,8 +2,10 @@ package com.myproject.springboot_advenced.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.myproject.springboot_advenced.dto.*;
+import com.myproject.springboot_advenced.entity.Order;
 import com.myproject.springboot_advenced.entity.Transaction;
 import com.myproject.springboot_advenced.dto.TransactionState;
+import com.myproject.springboot_advenced.mapper.TransactionMapper;
 import com.myproject.springboot_advenced.repository.OrderRepository;
 import com.myproject.springboot_advenced.repository.TransactionRepository;
 import com.myproject.springboot_advenced.service.TransactionService;
@@ -26,22 +28,23 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final OrderRepository orderRepository;
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
     @Override
-    public BaseResponse<JsonNode> checkPerformTransaction(Long amount, Map<String, String> account) {
+    public BaseResponse<JsonNode> checkPerformTransaction(CheckPerformTransactionRequest request) {
 
-        String phoneNum;
-        if (!account.containsKey("phone")) {
+        long orderId;
+        if (!request.getAccount().containsKey("phone")) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
         }
-        phoneNum = (account.get("phone"));
-        var order = orderRepository.findByPhoneNumber(phoneNum).orElse(null);
+        orderId = Long.parseLong(request.getAccount().get("phone"));
+        Order order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
         }
 
-        if (!Objects.equals(order.getTotalAmount(), amount)) {
+        if (!Objects.equals(order.getTotalAmount(), request.getAmount())) {
             return new BaseResponse<>(false, INCORRECT_AMOUNT.name());
         }
 
@@ -49,21 +52,36 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public BaseResponse<Transaction> createTransaction(CreateTransactionRequest request) {
+    public BaseResponse<TransactionDTO> createTransaction(CreateTransactionRequest request) {
+        log.info("createTransaction: {}", request);
 
-        var orderId = orderRepository.findById(request.getOrderId()).orElse(null);
+        long phoneNum;
+        if (!request.getAccount().containsKey("phone")) {
+            return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
+        }
+
+        phoneNum = Long.parseLong((request.getAccount().get("phone")));
+
+        var order = orderRepository.findById(phoneNum).orElse(null);
+
+        if (order == null) {
+            return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
+        }
+
+        if (!Objects.equals(order.getTotalAmount(), request.getAmount())) {
+            return new BaseResponse<>(false, INCORRECT_AMOUNT.name());
+        }
         Transaction transaction = Transaction.builder()
                 .transactionId(request.getId())
                 .amount(request.getAmount())
                 .state(TransactionState.CREATED)
                 .createdTime(LocalDateTime.now())
-                .time(request.getTime())
-                .order(orderId)
+                .order(order)
                 .build();
 
-        var savedTransaction = transactionRepository.save(transaction);
         log.info("transaction: {}", transaction);
-        return new BaseResponse<>(true, PaymentMessage.SUCCESS.name(), savedTransaction);
+
+        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
     }
 
     @Override

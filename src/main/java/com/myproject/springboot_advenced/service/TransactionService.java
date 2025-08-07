@@ -7,9 +7,9 @@ import com.myproject.springboot_advenced.entity.Transaction;
 import java.util.Map;
 
 public interface TransactionService {
-    BaseResponse<JsonNode> checkPerformTransaction(Long amount, Map<String, String> account);
+    BaseResponse<JsonNode> checkPerformTransaction(CheckPerformTransactionRequest data);
 
-    BaseResponse<Transaction> createTransaction(CreateTransactionRequest request);
+    BaseResponse<TransactionDTO> createTransaction(CreateTransactionRequest request);
 
     BaseResponse<Transaction> performTransaction(PerformTransactionRequest request);
 

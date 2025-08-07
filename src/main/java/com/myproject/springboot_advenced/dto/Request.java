@@ -7,5 +7,5 @@ import lombok.Data;
 public class Request {
     private Long id;
     private Method method;
-    private Params params;
+    private JsonNode params;
 }

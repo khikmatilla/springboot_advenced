@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
-    @Query("select o from Order o where o.contact = ?1")
-    Optional<Order> findByPhoneNumber(String phoneNum);
-
+//    @Query("select o from Order o where o.contact = ?1")
+//    Optional<Order> findByPhoneNumber(String phoneNum);
+//
+//    Optional<Order> findByContact(String contact);
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.myproject.springboot_advenced.dto.*;
 import com.myproject.springboot_advenced.entity.Transaction;
 import com.myproject.springboot_advenced.service.TransactionService;
+import com.myproject.springboot_advenced.service.impl.PaymeResolverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.Objects;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final PaymeResolverService paymeResolverService;
 
     @PostMapping("/pay")
     public ResponseEntity<Response> pay(
@@ -38,27 +40,28 @@ public class TransactionController {
 //
 //                String username = userDetails[0];
 //                String password = userDetails[1];
-                if (request.getMethod().name().equals("CheckPerformTransaction")) {
-                    BaseResponse<JsonNode> body = transactionService.checkPerformTransaction(
-                            request.getParams().getAmount(), request.getParams().getAccount());
-                    if (body != null && Objects.equals(body.getMessage(), "SUCCESS")) {
-                        return ResponseEntity.ok().body(new Response(Map.of("allow", true)));
-                    }
+
+                Response paymeResponse = paymeResolverService.resolve(request);
+
+                if (paymeResponse.getResult() != null) {
+                    return ResponseEntity.ok(paymeResponse);
+                } else {
+                    return ResponseEntity.badRequest().body(paymeResponse);
                 }
+
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException(e.getMessage());
             }
         }
-        return null;
     }
 
     @PostMapping("/chack-perform-transaction")
-    public BaseResponse<JsonNode> chackPerformTransaction(@RequestBody Long amount, @RequestBody Map<String, String> account) {
-        return transactionService.checkPerformTransaction(amount, account);
+    public BaseResponse<JsonNode> chackPerformTransaction(@RequestBody CheckPerformTransactionRequest request) {
+        return transactionService.checkPerformTransaction(request);
     }
 
     @PostMapping("/create-transaction")
-    public BaseResponse<Transaction> createTransaction(@RequestBody CreateTransactionRequest request) {
+    public BaseResponse<TransactionDTO> createTransaction(@RequestBody CreateTransactionRequest request) {
         log.info("REST createTransaction: {}", request);
         return transactionService.createTransaction(request);
     }
