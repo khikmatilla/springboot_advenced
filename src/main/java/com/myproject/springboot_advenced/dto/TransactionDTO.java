@@ -22,11 +22,13 @@ public class TransactionDTO {
 
     private Long orderId;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
     private LocalDateTime performTime;
 
     private LocalDateTime cancelTime;
+
+    private Integer reason;
 
     private Long time;
 }

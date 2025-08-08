@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 @Slf4j
@@ -32,9 +34,12 @@ public class CreateTransactionService implements PaymeService {
         BaseResponse<TransactionDTO> body = transactionService.createTransaction(createTransactionRequest);
         String orderId = String.valueOf(body.getData().getOrderId());
 
+        LocalDateTime createTime = body.getData().getCreatedTime();
+        long createTimeMilli = createTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
         if (body != null && Objects.equals(body.getMessage(), "SUCCESS") && body.getData() != null) {
             var createTransactionResponse = new CreateTransactionResponse(
-                    body.getData().getTime(),
+                    createTimeMilli,
                     body.getData().getId(),
                     body.getData().getState().getCode()
             );

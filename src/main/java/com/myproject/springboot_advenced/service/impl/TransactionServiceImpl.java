@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
         }
         orderId = request.getAccount().get("phone");
-        Order order = orderRepository.findByContactAndStatus(orderId, OrderStatus.FINISHED).orElse(null);
+        Order order = orderRepository.findByContactAndStatus(orderId, OrderStatus.WAITING_FOR_PAYMENT).orElse(null);
 
         if (order == null) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
@@ -62,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         phoneNum = request.getAccount().get("phone");
 
-        var order = orderRepository.findByContactAndStatus(phoneNum, OrderStatus.FINISHED).orElse(null);
+        var order = orderRepository.findByContactAndStatus(phoneNum, OrderStatus.WAITING_FOR_PAYMENT).orElse(null);
 
         if (order == null) {
             return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
@@ -81,44 +81,63 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
 
         log.info("transaction: {}", transaction);
-        Transaction save = transactionRepository.save(transaction);
+        transaction = transactionRepository.save(transaction);
 
-        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(save));
+        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
     }
 
     @Override
-    public BaseResponse<Transaction> performTransaction(PerformTransactionRequest request) {
+    public BaseResponse<TransactionDTO> performTransaction(PerformTransactionRequest request) {
+        log.info("performTransaction: {}", request);
         var transaction = transactionRepository.findByTransactionId(request.getId()).orElse(null);
         if (transaction == null) {
             return new BaseResponse<>(false, TRANSACTION_NOT_FOUND.name());
         }
         if (Objects.equals(transaction.getState(), TransactionState.CREATED)) {
             var order = orderRepository.findById(transaction.getOrder().getId()).orElse(null);
-            assert order != null;
+            if (order == null) {
+                return new BaseResponse<>(false, ORDER_NOT_FOUND.name());
+            }
+            order.setStatus(OrderStatus.FINISHED);
             orderRepository.save(order);
 
             transaction.setPerformTime(LocalDateTime.now());
             transaction.setState(SUCCESS);
-            var createdTransaction = transactionRepository.save(transaction);
+            transaction = transactionRepository.save(transaction);
 
-            return new BaseResponse<>(true, SUCCESS.name(), createdTransaction);
+            return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
         }
+        if (Objects.equals(transaction.getState(), TransactionState.SUCCESS)) {
+            return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
+        }
+
         return new BaseResponse<>(false, TRANSACTION_NOT_FOUND.name());
     }
 
     @Override
-    public BaseResponse<JsonNode> cancelTransaction(CancelTransaction request) {
+    public BaseResponse<TransactionDTO> checkTransaction(CheckTransactionRequest request) {
+        log.info("checkTransaction: {}", request);
+
+        var transaction = transactionRepository.findByTransactionId(request.getId()).orElse(null);
+        if (transaction == null) {
+            return new BaseResponse<>(false, TRANSACTION_NOT_FOUND.name());
+        }
+
+        return new BaseResponse<>(true, SUCCESS.name(), transactionMapper.toDto(transaction));
+
+    }
+
+    @Override
+    public BaseResponse<TransactionDTO> cancelTransaction(CancelTransactionRequest request) {
         log.info("cancelTransaction: {}", request);
-        var transaction = transactionRepository.findById(request.getTransactionId()).orElse(null);
-        Transaction transaction1 = Transaction.builder()
-                .id(transaction.getId())
-                .amount(transaction.getAmount())
-                .createdTime(LocalDateTime.now())
-                .order(transaction.getOrder())
-                .state(CANCELED1)
-                .cancelTime(LocalDateTime.now())
-                .build();
-        transactionRepository.save(transaction1);
-        return new BaseResponse<>(false, SUCCESS.name());
+        var transaction = transactionRepository.findByTransactionId(request.getId()).orElse(null);
+        if (transaction == null) {
+            return new BaseResponse<>(false, TRANSACTION_NOT_FOUND.name());
+        }
+        transaction.setCancelTime(LocalDateTime.now());
+        transaction.setState(CANCELED1);
+        transaction.setReason(request.getReason());
+        transactionRepository.save(transaction);
+        return new BaseResponse<>(true,SUCCESS.name(), transactionMapper.toDto(transaction));
     }
 }

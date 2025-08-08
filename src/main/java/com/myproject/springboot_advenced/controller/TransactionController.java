@@ -67,13 +67,19 @@ public class TransactionController {
     }
 
     @PostMapping("/perform-transaction")
-    public BaseResponse<Transaction> performTransaction(@RequestBody PerformTransactionRequest request) {
+    public BaseResponse<TransactionDTO> performTransaction(@RequestBody PerformTransactionRequest request) {
         log.info("REST performTransaction: {}", request);
         return transactionService.performTransaction(request);
     }
 
+    @PostMapping("/check-transaction")
+    public BaseResponse<TransactionDTO> checkTransaction(@RequestBody CheckTransactionRequest request) {
+        log.info("REST checkTransaction: {}", request);
+        return transactionService.checkTransaction(request);
+    }
+
     @PostMapping("/cancel-transaction")
-    public BaseResponse<JsonNode> cancelTransaction(@RequestBody CancelTransaction request) {
+    public BaseResponse<TransactionDTO> cancelTransaction(@RequestBody CancelTransactionRequest request) {
         log.info("REST cancelTransaction: {}", request);
         return transactionService.cancelTransaction(request);
     }

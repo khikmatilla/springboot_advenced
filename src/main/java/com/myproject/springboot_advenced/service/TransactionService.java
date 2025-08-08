@@ -11,7 +11,9 @@ public interface TransactionService {
 
     BaseResponse<TransactionDTO> createTransaction(CreateTransactionRequest request);
 
-    BaseResponse<Transaction> performTransaction(PerformTransactionRequest request);
+    BaseResponse<TransactionDTO> performTransaction(PerformTransactionRequest request);
 
-    BaseResponse<JsonNode> cancelTransaction(CancelTransaction request);
+    BaseResponse<TransactionDTO> checkTransaction(CheckTransactionRequest request);
+
+    BaseResponse<TransactionDTO> cancelTransaction(CancelTransactionRequest request);
 }
